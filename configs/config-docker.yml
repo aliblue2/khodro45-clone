@@ -1,26 +1,48 @@
 server:
-  Port: 5005
-  RunMode: debug
+  internalPort: 5005
+  externalPort: 5005
+  runMode: release
+  domain: localhost
 logger:
-  filePath: ../logs/logs.log
-  Encoding: json
+  filePath: /app/logs/
+  encoding: json
   level: debug
 cors:
-  allowOrigin: "*"
-
+  allowOrigins: "*"
 postgres:
   host: postgres_container
   port: 5432
   user: postgres
-  password: postgres
-  dbName: car_sales_db
-  sslMode: false
-
+  password: admin
+  dbName: car_sale_db
+  sslMode: disable
+  maxIdleConns: 15
+  maxOpenConns: 100
+  connMaxLifetime: 5
 redis:
   host: redis_container
   port: 6379
-  password: alireza80
+  password: password
   db: 0
-  minIdleConnections: 100
-  poolSize: 5000
-  poolTimeout: 240
+  dialTimeout: 5
+  readTimeout: 5
+  writeTimeout: 5
+  poolSize: 10
+  poolTimeout: 15
+  idleCheckFrequency: 500
+password:
+  includeChars: true
+  includeDigits: true
+  minLength: 6
+  maxLength: 64
+  includeUppercase: true
+  includeLowercase: true
+otp:
+  expireTime: 120
+  digits: 6
+  limiter: 100
+jwt:
+  secret: "khodro45secretKey"
+  refreshSecret: "khodro45secretKey"
+  accessTokenExpireDuration: 60
+  refreshTokenExpireDuration: 60

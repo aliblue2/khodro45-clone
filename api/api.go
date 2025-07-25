@@ -14,19 +14,21 @@ import (
 
 func InitiateApp() {
 	cfg := configs.GetConfig()
-	runingPort := fmt.Sprintf(":%s", cfg.Server.Port)
+	runingPort := fmt.Sprintf(":%s", cfg.Server.InternalPort)
 	r := gin.New()
 
-	validator, ok := binding.Validator.Engine().(*validator.Validate)
+	val, ok := binding.Validator.Engine().(*validator.Validate)
 
 	if ok {
-		validator.RegisterValidation("mobile", validations.IranPhoneNumChecker)
+		val.RegisterValidation("mobile", validations.IranPhoneNumChecker, true)
+		val.RegisterValidation("password", validations.CheckPassword, true)
 	}
 
+	r.Use(middlewares.CorsHandler(*cfg))
 	r.Use(gin.Logger(), gin.Recovery(), middlewares.Limiter())
+
 	api := r.Group("/api")
 	v1 := api.Group("/v1")
-
 	{
 		health := v1.Group("/health")
 		test := v1.Group("/test")

@@ -12,11 +12,15 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Redis    RedisConfig
+	Passwrod Passwordonfig
+	Cors     CorsConfig
 }
 
 type ServerConfig struct {
-	Port    string
-	RunMode string
+	InternalPort string
+	ExternalPort string
+	RunMode      string
+	Domain       string
 }
 
 type PostgresConfig struct {
@@ -25,7 +29,7 @@ type PostgresConfig struct {
 	User     string
 	Password string
 	DbName   string
-	SSLMode  bool
+	SSLMode  string
 }
 
 type RedisConfig struct {
@@ -36,6 +40,19 @@ type RedisConfig struct {
 	MinIdleConnections int
 	PoolSize           int
 	PoolTimeout        int
+}
+
+type Passwordonfig struct {
+	IncludeChars     bool
+	IncludeDigits    bool
+	IncludeLowercase bool
+	IncludeUppercase bool
+	MinLength        int
+	MaxLength        int
+}
+
+type CorsConfig struct {
+	AllowedOrigins string
 }
 
 func GetConfig() *Config {
@@ -92,10 +109,8 @@ func getConfigPath(envPath string) string {
 	switch envPath {
 	case "docker":
 		return "../configs/config-docker"
-	case "development":
-		return "../configs/config-development"
 	case "production":
-		return "../configs/config-development"
+		return "../configs/config-production"
 	default:
 		return "../configs/config-development"
 

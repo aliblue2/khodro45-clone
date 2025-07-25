@@ -3,6 +3,7 @@ module github.com/aliblue2/khodro45
 go 1.24.4
 
 require (
+	github.com/didip/tollbooth/v8 v8.0.1
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/spf13/viper v1.20.1
@@ -12,7 +13,6 @@ require (
 	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
-	github.com/didip/tollbooth/v8 v8.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
