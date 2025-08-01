@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -12,8 +13,9 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Redis    RedisConfig
-	Passwrod Passwordonfig
+	Password PasswordConfig
 	Cors     CorsConfig
+	Logger   LoggerConfig
 }
 
 type ServerConfig struct {
@@ -24,35 +26,48 @@ type ServerConfig struct {
 }
 
 type PostgresConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	DbName   string
-	SSLMode  string
+	Host               string
+	Port               string
+	User               string
+	Password           string
+	DbName             string
+	SSLMode            string
+	MaxIdleConns       int
+	MaxOpenConns       int
+	SetConnMaxLifetime time.Duration
 }
 
 type RedisConfig struct {
 	Host               string
 	Port               string
 	Password           string
-	Db                 int
-	MinIdleConnections int
+	Db                 string
 	PoolSize           int
-	PoolTimeout        int
+	PoolTimeout        time.Duration
+	DialTimeout        time.Duration
+	ReadTimeout        time.Duration
+	WriteTimeout       time.Duration
+	IdleCheckFrequency time.Duration
 }
 
-type Passwordonfig struct {
+type PasswordConfig struct {
 	IncludeChars     bool
 	IncludeDigits    bool
-	IncludeLowercase bool
-	IncludeUppercase bool
 	MinLength        int
 	MaxLength        int
+	IncludeUppercase bool
+	IncludeLowercase bool
 }
 
 type CorsConfig struct {
-	AllowedOrigins string
+	AllowOrigins string
+}
+
+type LoggerConfig struct {
+	FilePath string
+	Encoding string
+	Level    string
+	Logger   string
 }
 
 func GetConfig() *Config {

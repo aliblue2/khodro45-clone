@@ -12,12 +12,12 @@ func CheckPassword(fld validator.FieldLevel) bool {
 	val, ok := fld.Field().Interface().(string)
 
 	if !ok {
-		fld.Param()
-		log.Fatalf("invalida password type")
+		log.Println("invalida password type")
 		return false
 	}
+
 	cfg := configs.GetConfig()
 	result := common.CheckPassword(val, cfg)
-	log.Println(result)
 	return result
+
 }

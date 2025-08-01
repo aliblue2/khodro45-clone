@@ -1,0 +1,154 @@
+definitions:
+  handlers.PersonWithNumber:
+    properties:
+      first_name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      last_name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      number:
+        maxLength: 11
+        minLength: 11
+        type: string
+      password:
+        type: string
+    required:
+    - first_name
+    - last_name
+    - number
+    - password
+    type: object
+  helper.BaseResponse:
+    properties:
+      error: {}
+      result: {}
+      result-code:
+        type: integer
+      success:
+        type: boolean
+      validation-error:
+        items:
+          $ref: '#/definitions/validations.ValidationError'
+        type: array
+    type: object
+  validations.ValidationError:
+    properties:
+      message:
+        type: string
+      property:
+        type: string
+      tag:
+        type: string
+      value:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/health:
+    get:
+      consumes:
+      - application/json
+      description: health check by calling a get request
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+        "400":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+      summary: health check of v1 api
+      tags:
+      - health
+  /v1/health/{id}:
+    get:
+      consumes:
+      - application/json
+      description: health check by calling a get request
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+        "400":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+      summary: health check of v1 api
+      tags:
+      - health
+  /v1/test/signup:
+    post:
+      consumes:
+      - application/json
+      description: signup user with mobile number
+      parameters:
+      - description: person
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.PersonWithNumber'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: PersonWithNumber
+        "400":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+        "500":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+      summary: signup
+      tags:
+      - signup
+  /v1/test/upload-files:
+    post:
+      consumes:
+      - application/json
+      description: upload file to server
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+        "400":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+        "500":
+          description: failed
+          schema:
+            $ref: '#/definitions/helper.BaseResponse'
+      summary: file upload
+      tags:
+      - upload
+swagger: "2.0"

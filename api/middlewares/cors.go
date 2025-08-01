@@ -7,7 +7,7 @@ import (
 
 func CorsHandler(cfg configs.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		allowOrigin := cfg.Cors.AllowedOrigins
+		allowOrigin := cfg.Cors.AllowOrigins
 
 		if allowOrigin != "" {
 			ctx.Header("Access-Control-Allow-Origin", allowOrigin)

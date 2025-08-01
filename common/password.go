@@ -1,7 +1,6 @@
 package common
 
 import (
-	"log"
 	"unicode"
 
 	"github.com/aliblue2/khodro45/configs"
@@ -16,32 +15,24 @@ import (
 // )
 
 func CheckPassword(password string, cfg *configs.Config) bool {
-	if len(password) < cfg.Passwrod.MinLength {
-		log.Println("because of minlength")
+
+	if len(password) < cfg.Password.MinLength {
 		return false
 	}
-
-	if cfg.Passwrod.IncludeChars && !HasLetter(password) {
-		log.Println("because of chars")
+	if cfg.Password.IncludeChars && !HasLetter(password) {
 		return false
 	}
-
-	if cfg.Passwrod.IncludeDigits && !HasDigits(password) {
-		log.Println("because of digits")
+	if cfg.Password.IncludeDigits && !HasDigits(password) {
 		return false
 	}
-
-	if cfg.Passwrod.IncludeLowercase && !HasLower(password) {
-		log.Println("because of lower")
+	if cfg.Password.IncludeLowercase && !HasLower(password) {
 		return false
 	}
-
-	if cfg.Passwrod.IncludeUppercase && !HasUpper(password) {
-		log.Println("because of upper")
+	if cfg.Password.IncludeUppercase && !HasUpper(password) {
 		return false
 	}
-
 	return true
+
 }
 
 func HasLetter(s string) bool {

@@ -7,14 +7,15 @@ logger:
   filePath: /app/logs/
   encoding: json
   level: debug
+  logger : zap
 cors:
   allowOrigins: "*"
 postgres:
   host: postgres_container
   port: 5432
   user: postgres
-  password: admin
-  dbName: car_sale_db
+  password: postgres
+  dbName: car_sales_db
   sslMode: disable
   maxIdleConns: 15
   maxOpenConns: 100
@@ -22,7 +23,7 @@ postgres:
 redis:
   host: redis_container
   port: 6379
-  password: password
+  password: alireza80
   db: 0
   dialTimeout: 5
   readTimeout: 5
