@@ -26,5 +26,7 @@ func main() {
 		panic(err)
 	}
 
+	logger.Info(logging.General, logging.Startup, "successfully created", nil)
+
 	api.InitiateServer(cfg)
 }
