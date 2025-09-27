@@ -1,4 +1,82 @@
 services:
+  setup:
+    build:
+      context: elk/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./elk/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./elk/setup/helpers.sh:/helpers.sh:ro,Z
+      - ./elk/setup/roles:/roles:ro,Z
+      - setup:/state:Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+    networks:
+      - webapi_network
+    depends_on:
+      - elasticsearch
+
+  ####################### ELK #######################
+  elasticsearch:
+    image: docker.arvancloud.ir/elasticsearch:${ELASTIC_VERSION}
+    container_name: elasticsearch
+    volumes:
+      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      discovery.type: single-node
+    networks:
+      - webapi_network
+    restart: unless-stopped
+
+  kibana:
+    image: docker.arvancloud.ir/kibana:${ELASTIC_VERSION}
+    container_name: kibana
+    volumes:
+      - ./elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
+    networks:
+      - webapi_network
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+  filebeat:
+    build:
+      context: elk/filebeat/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: filebeat
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+    volumes:
+      - ./elk/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ../logs:/var/log/filebeat/service:ro
+      - logs:/var/log/filebeat
+      - logs:/app:ro
+    environment:
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD}
+    networks:
+      - webapi_network
+    depends_on:
+      - elasticsearch
+
   postgres:
     image: postgres:latest
     container_name: postgres_container
@@ -6,29 +84,29 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: car_sales_db
-      PGDATA: /data/postgres
+      PGDATA: /var/lib/postgresql/data
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - webapi_netwrok
+      - webapi_network
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     container_name: pgadmin_container
     ports:
       - "8090:80"
-    networks:
-      - webapi_netwrok
-    volumes:
-      - pgadmin:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: alirezaabdolmaleki80@gmail.com
       PGADMIN_DEFAULT_PASSWORD: alireza80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - webapi_network
     restart: unless-stopped
 
   redis:
@@ -36,20 +114,23 @@ services:
     container_name: redis_container
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
-      - ./redis/redis.conf:/etc/redis/redis.conf
+      - ./redis/redis.conf:/etc/redis/redis.conf:ro,Z
       - redis:/etc/redis
       - redis:/data
     ports:
       - "6379:6379"
     networks:
-      - webapi_netwrok
+      - webapi_network
     restart: unless-stopped
 
 volumes:
   postgres:
   pgadmin:
   redis:
+  logs:
+  setup:
+  elasticsearch:
 
 networks:
-  webapi_netwrok:
-    driver: "bridge"
+  webapi_network:
+    driver: bridge

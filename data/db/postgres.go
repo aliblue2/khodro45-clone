@@ -35,7 +35,7 @@ func InitiateDb(cfg *configs.Config) error {
 	db.SetMaxIdleConns(cfg.Postgres.MaxIdleConns)
 	db.SetMaxOpenConns(cfg.Postgres.MaxOpenConns)
 	db.SetConnMaxLifetime(cfg.Postgres.SetConnMaxLifetime * time.Minute)
-	logger.Info(logging.Postgres, logging.Startup, "postgres client successfully connected and establisher", nil)
+	logger.Info(logging.Postgres, logging.Startup, "postgres client successfully connected and established", nil)
 	return nil
 }
 

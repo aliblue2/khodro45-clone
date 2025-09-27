@@ -33,6 +33,9 @@ func InitiateRedis(cfg *configs.Config) error {
 		logger.Fatal(logging.Redis, logging.Startup, err.Error(), nil)
 		return err
 	}
+
+	logger.Info(logging.Redis, logging.Startup, "Redis Client Successfully Created and Established", nil)
+
 	return nil
 }
 
